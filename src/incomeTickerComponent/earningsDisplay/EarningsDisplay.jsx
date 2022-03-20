@@ -25,16 +25,14 @@ export default function EarningsDisplay({ initialVal }) {
     <div className={styles.wrapper}>
       $
       {decimals.map((value, idx) => {
-        {
-          return (idx + 2) % 3 === 0 && idx != decimals.length - 1 ? (
-            <>
-              <Counter val={value} />
-              <span>,</span>
-            </>
-          ) : (
+        return (idx + 2) % 3 === 0 && idx !== decimals.length - 1 ? (
+          <>
             <Counter val={value} />
-          );
-        }
+            <span>,</span>
+          </>
+        ) : (
+          <Counter val={value} />
+        );
       })}
       .
       {cents.map((value, idx) => (

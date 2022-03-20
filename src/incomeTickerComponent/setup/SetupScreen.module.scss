@@ -1,0 +1,69 @@
+.wrapper {
+  background-color: #232323;
+  min-height: 250px;
+  border-radius: 10px;
+  color: white;
+  padding: 20px;
+  min-width: 500px;
+}
+
+.title {
+  font-size: x-large;
+  font-weight: bold;
+  font-style: italic;
+  display: flex;
+  border-bottom: 1px solid white;
+  width: 200px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-items: left;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  justify-content: flex-start;
+  white-space: nowrap;
+  align-items: center;
+}
+
+.right {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.darkBg {
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.input {
+  margin-left: 10px;
+  display: inline;
+}
+
+.checkbox{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.5); /* IE */
+  -moz-transform: scale(1.5); /* FF */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */
+  -o-transform: scale(1.5); /* Opera */
+  transform: scale(1.5);
+  margin-left: 5px;
+}
+
+.margin{
+  margin: 10px;
+}
+
+.spacer {
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+  justify-content: flex-end;
+}

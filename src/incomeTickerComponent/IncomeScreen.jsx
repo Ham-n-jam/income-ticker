@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "./IncomeTicker.module.scss";
+import styles from "./IncomeScreen.module.scss";
 import EarningsDisplay from "./earningsDisplay/EarningsDisplay";
 import Button from "./button/Button";
 import SetupIcon from "../icons/options.svg";
 
-export default function IncomeTicker() {
+export default function IncomeScreen() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.title}>Today's cheddar</div>
@@ -17,7 +17,10 @@ export default function IncomeTicker() {
       </div>
       <div className={styles.spacer}>
         <div className={styles.settings}>
-          <Button icon={<img src={SetupIcon} alt={"Setup"} />} />
+          <Button
+            icon={<img src={SetupIcon} alt={"SetupScreen"} />}
+            link={"setup"}
+          />
         </div>
       </div>
     </div>
