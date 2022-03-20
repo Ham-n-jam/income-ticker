@@ -1,0 +1,11 @@
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-family: CreditCard;
+}
+
+@font-face {
+  font-family: 'CreditCard';
+  src: URL('./CreditCardFont.ttf') format('truetype');
+}
