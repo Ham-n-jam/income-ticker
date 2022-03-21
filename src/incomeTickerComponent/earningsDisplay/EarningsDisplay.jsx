@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import styles from "./EarningsDisplay.module.scss";
 import Counter from "../counter/Counter";
 
-export default function EarningsDisplay({ initialVal }) {
-  const [earningsCents, setEarningsCents] = useState(initialVal);
+export default function EarningsDisplay({ getCurrentValFunc }) {
+  const [earningsCents, setEarningsCents] = useState(getCurrentValFunc);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setEarningsCents((earningsCents) => earningsCents + 1);
+      setEarningsCents(Math.round(getCurrentValFunc()));
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -17,21 +17,25 @@ export default function EarningsDisplay({ initialVal }) {
   if (cents.length === 1) {
     cents.unshift("0");
   }
-  if (decimals.length === 0) {
-    decimals.unshift("0");
+  let dollars = parseInt(
+    earningsCents.toString().slice(0, -2)
+  ).toLocaleString();
+  if (dollars === "NaN") {
+    dollars = "0";
+  }
+  dollars = dollars.split("");
+  if (dollars.length === 0) {
+    dollars.unshift("0");
   }
 
   return (
     <div className={styles.wrapper}>
       $
-      {decimals.map((value, idx) => {
-        return (idx + 2) % 3 === 0 && idx !== decimals.length - 1 ? (
-          <>
-            <Counter val={value} />
-            <span>,</span>
-          </>
-        ) : (
+      {dollars.map((value) => {
+        return value !== "," || value !== "." ? (
           <Counter val={value} />
+        ) : (
+          <span>value</span>
         );
       })}
       .

@@ -11,7 +11,6 @@ export default function Counter({ val }) {
   }, [val]);
 
   function updateCount(newVal) {
-    console.log(newVal, count);
     if (newVal !== count) {
       // 1. Old number goes up
       setTimeout(() => setAnimationCount("goUp"), 0);

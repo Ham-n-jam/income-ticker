@@ -50,3 +50,12 @@
 .settings{
   display: flex;
 }
+
+.workStatus {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin-right: 20px;
+  color: #b4a390;
+}

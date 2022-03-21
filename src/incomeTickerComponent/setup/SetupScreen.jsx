@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./SetupScreen.module.scss";
 import Button from "../button/Button";
 import TimePicker from "rc-time-picker";
@@ -6,8 +6,99 @@ import moment from "moment";
 import "rc-time-picker/assets/index.css";
 
 export default function SetupScreen() {
-  function onChange() {}
+  const daysOfTheWeek = {
+    monday: "Mo",
+    tuesday: "Tu",
+    wednesday: "We",
+    thursday: "Th",
+    friday: "Fr",
+    saturday: "Sa",
+    sunday: "Su",
+  };
   const format = "h:mm a";
+  const [paymentFreq, setPaymentFreq] = useState(
+    loadDataField("paymentFreq", "weekly")
+  );
+  const [paymentAmount, setPaymentAmount] = useState(
+    loadDataField("paymentAmount", "1.00")
+  );
+  const [workdays, setWorkdays] = useState(
+    loadDataField("workdays", [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+    ])
+  );
+  const [workHours, setWorkHours] = useState(
+    loadDataField("workHours", {
+      start: moment().hour(9).minute(0).second(0),
+      end: moment().hour(17).minute(0).second(0),
+    })
+  );
+  const [lunchBreak, setLunchBreak] = useState(
+    loadDataField("lunchBreak", {
+      start: moment().hour(12).minute(0).second(0),
+      end: moment().hour(13).minute(0).second(0),
+    })
+  );
+
+  function handlePaymentFreqChange(event) {
+    setPaymentFreq(event.target.value);
+  }
+  function handlePaymentAmountChange(event) {
+    setPaymentAmount(event.target.value);
+  }
+  function handlePaymentAmountFocusOut(event) {
+    // Add the correct number of decimal places
+    if (!paymentAmount.includes(".")) {
+      setPaymentAmount(paymentAmount + ".00");
+    } else if (paymentAmount.split(".")[1].length === 1) {
+      setPaymentAmount(paymentAmount + "0");
+    }
+  }
+  function handleWorkdayChange(event) {
+    if (event.target.checked) {
+      setWorkdays([event.target.id, ...workdays]);
+    } else {
+      setWorkdays(workdays.filter((item) => item !== event.target.id));
+    }
+  }
+  function handleTimeChange(newTime, target) {
+    switch (target) {
+      case "workStart":
+        setWorkHours({ start: newTime, end: workHours.end });
+        break;
+      case "workEnd":
+        setWorkHours({ start: workHours.start, end: newTime });
+        break;
+      case "lunchStart":
+        setLunchBreak({ start: newTime, end: lunchBreak.end });
+        break;
+      case "lunchEnd":
+        setLunchBreak({ start: lunchBreak.start, end: newTime });
+        break;
+      default:
+        break;
+    }
+  }
+
+  function loadDataField(fieldName, defaultVal) {
+    let savedVal = JSON.parse(localStorage.getItem(fieldName));
+    if (savedVal && (fieldName === "workHours" || fieldName === "lunchBreak")) {
+      savedVal = { start: moment(savedVal.start), end: moment(savedVal.end) };
+    }
+    return savedVal || defaultVal;
+  }
+
+  function saveDataToLocalStorage() {
+    localStorage.setItem("paymentFreq", JSON.stringify(paymentFreq));
+    localStorage.setItem("paymentAmount", JSON.stringify(paymentAmount));
+    localStorage.setItem("workdays", JSON.stringify(workdays));
+    localStorage.setItem("workHours", JSON.stringify(workHours));
+    localStorage.setItem("lunchBreak", JSON.stringify(lunchBreak));
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -20,11 +111,12 @@ export default function SetupScreen() {
               className={`${styles.darkBg} ${styles.input}`}
               id="frequency"
               name="frequency"
+              onChange={handlePaymentFreqChange}
+              value={paymentFreq}
             >
               <option value="weekly">Weekly</option>
               <option value="fortnightly">Fortnightly</option>
               <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
             </select>
           </div>
         </div>
@@ -40,6 +132,9 @@ export default function SetupScreen() {
               min="0"
               id="amount"
               name="amount"
+              value={paymentAmount}
+              onChange={handlePaymentAmountChange}
+              onBlur={handlePaymentAmountFocusOut}
             />
           </div>
         </div>
@@ -50,74 +145,20 @@ export default function SetupScreen() {
             <br />
           </label>
           <div className={styles.right}>
-            <label className={styles.input} htmlFor="monday">
-              Mo
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="monday"
-              value="monday"
-              checked
-            />
-            <label className={styles.input} htmlFor="tuesday">
-              Tu
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="tuesday"
-              value="tuesday"
-              checked
-            />
-            <label className={styles.input} htmlFor="tuesday">
-              We
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="wednesday"
-              value="wednesday"
-              checked
-            />
-            <label className={styles.input} htmlFor="wednesday">
-              Th
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="thursday"
-              value="thursday"
-              checked
-            />
-            <label className={styles.input} htmlFor="thursday">
-              Fr
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="friday"
-              value="friday"
-              checked
-            />
-            <label className={styles.input} htmlFor="friday">
-              Sa
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="saturday"
-              value="saturday"
-            />
-            <label className={styles.input} htmlFor="saturday">
-              Su
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              id="sunday"
-              value="sunday"
-            />
+            {Object.keys(daysOfTheWeek).map((day) => (
+              <div key={day}>
+                <label className={styles.input} htmlFor="monday">
+                  {daysOfTheWeek[day]}
+                </label>
+                <input
+                  className={styles.checkbox}
+                  type="checkbox"
+                  id={day}
+                  checked={workdays.includes(day)}
+                  onChange={handleWorkdayChange}
+                />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -126,18 +167,22 @@ export default function SetupScreen() {
           <div className={styles.right}>
             <TimePicker
               showSecond={false}
-              defaultValue={moment().hour(9).minute(0)}
+              defaultValue={workHours.start}
               className="xxx"
-              onChange={onChange}
+              onChange={(newTime) => {
+                handleTimeChange(newTime, "workStart");
+              }}
               format={format}
               use12Hours
             />
             <span className={styles.margin}>to</span>
             <TimePicker
               showSecond={false}
-              defaultValue={moment().hour(17).minute(0)}
+              defaultValue={workHours.end}
               className="xxx"
-              onChange={onChange}
+              onChange={(newTime) => {
+                handleTimeChange(newTime, "workEnd");
+              }}
               format={format}
               use12Hours
             />
@@ -149,18 +194,22 @@ export default function SetupScreen() {
           <div className={styles.right}>
             <TimePicker
               showSecond={false}
-              defaultValue={moment().hour(12).minute(0)}
+              defaultValue={lunchBreak.start}
               className="xxx"
-              onChange={onChange}
+              onChange={(newTime) => {
+                handleTimeChange(newTime, "lunchStart");
+              }}
               format={format}
               use12Hours
             />
             <span className={styles.margin}>to</span>
             <TimePicker
               showSecond={false}
-              defaultValue={moment().hour(13).minute(0)}
+              defaultValue={lunchBreak.end}
               className="xxx"
-              onChange={onChange}
+              onChange={(newTime) => {
+                handleTimeChange(newTime, "lunchEnd");
+              }}
               format={format}
               use12Hours
             />
@@ -169,7 +218,13 @@ export default function SetupScreen() {
       </form>
 
       <div className={styles.spacer}>
-        <Button text={"Done"} link={"../"} color="blue" />
+        <Button
+          onClick={saveDataToLocalStorage}
+          type="submit"
+          text={"Done"}
+          link={"../"}
+          color="blue"
+        />
       </div>
     </div>
   );
