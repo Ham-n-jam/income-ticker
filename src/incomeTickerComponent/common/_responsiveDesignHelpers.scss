@@ -1,0 +1,44 @@
+@mixin responsive($breakpoint) {
+  $mobileSize: 600px;
+  $tinyMobileSize: 350px;
+  $tabletSize: 880px;
+
+  // Note that applying a mobile css change will also stack the changes for views of greater size than it (e.g. tablet)
+  @if $breakpoint==tablet {
+    @media only screen and (max-width: $tabletSize) {
+      @content;
+    }
+  }
+
+  @if $breakpoint==mobile {
+    @media only screen and (max-width: $mobileSize) {
+      @content;
+    }
+  }
+
+  @if $breakpoint==tinyMobile {
+    @media only screen and (max-width: $tinyMobileSize) {
+      @content;
+    }
+  }
+}
+
+// Margins that shrink on smaller devices
+.responsiveMargin {
+  margin: 1rem 6rem;
+}
+@include responsive(tablet) {
+  .responsiveMargin {
+    margin: 0.8rem 4rem;
+  }
+}
+@include responsive(mobile) {
+  .responsiveMargin {
+    margin: 0.6rem 1.5rem;
+  }
+}
+@include responsive(tinyMobile) {
+  .responsiveMargin {
+    margin: 0.6rem 1rem;
+  }
+}

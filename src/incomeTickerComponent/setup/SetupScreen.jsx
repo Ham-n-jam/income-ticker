@@ -7,6 +7,7 @@ import "rc-time-picker/assets/index.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-datepicker/dist/react-datepicker-cssmodules.css";
+import SetupIcon from "../icons/options.svg";
 
 export default function SetupScreen() {
   const daysOfTheWeek = {
@@ -119,7 +120,10 @@ export default function SetupScreen() {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.title}>Setup</div>
+      <div className={styles.title}>
+        <img className={styles.icon} src={SetupIcon} alt={"SetupScreen"} />
+        Setup
+      </div>
       <form className={styles.form}>
         <div className={styles.inputWrapper}>
           <label htmlFor="frequency">Payment frequency:</label>
@@ -162,20 +166,22 @@ export default function SetupScreen() {
             <br />
           </label>
           <div className={styles.right}>
-            {Object.keys(daysOfTheWeek).map((day) => (
-              <div key={day}>
-                <label className={styles.input} htmlFor="monday">
-                  {daysOfTheWeek[day]}
-                </label>
-                <input
-                  className={styles.checkbox}
-                  type="checkbox"
-                  id={day}
-                  checked={workdays.includes(day)}
-                  onChange={handleWorkdayChange}
-                />
-              </div>
-            ))}
+            <div className={styles.dates}>
+              {Object.keys(daysOfTheWeek).map((day) => (
+                <div key={day}>
+                  <label className={styles.input} htmlFor="monday">
+                    {daysOfTheWeek[day]}
+                  </label>
+                  <input
+                    className={styles.checkbox}
+                    type="checkbox"
+                    id={day}
+                    checked={workdays.includes(day)}
+                    onChange={handleWorkdayChange}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

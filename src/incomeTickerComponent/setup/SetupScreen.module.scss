@@ -1,3 +1,5 @@
+@import '../common/responsiveDesignHelpers';
+
 .wrapper {
   background-color: #232323;
   min-height: 250px;
@@ -14,6 +16,16 @@
   display: flex;
   border-bottom: 1px solid white;
   width: 200px;
+  align-items: center;
+  padding-bottom: 4px;
+}
+
+.icon {
+  max-height: 20px;
+  max-width: 20px;
+  min-height: 20px;
+  min-width: 20px;
+  margin-right: 10px;
 }
 
 .form {
@@ -36,6 +48,11 @@
   justify-content: flex-end;
   align-items: center;
   width: 100%;
+}
+
+.dates {
+  display: flex;
+  flex-direction: row;
 }
 
 .darkBg {
@@ -74,4 +91,18 @@
   border: none;
   border-radius: 5px;
   padding: 5px;
+}
+
+@include responsive(mobile) {
+  .wrapper {
+    min-width: 0px;
+  }
+  .inputWrapper {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .right {
+    justify-content: flex-start;
+  }
 }
