@@ -168,7 +168,7 @@ export default function SetupScreen() {
           <div className={styles.right}>
             <div className={styles.dates}>
               {Object.keys(daysOfTheWeek).map((day) => (
-                <div key={day}>
+                <div className={styles.day} key={day}>
                   <label className={styles.input} htmlFor="monday">
                     {daysOfTheWeek[day]}
                   </label>
@@ -188,54 +188,60 @@ export default function SetupScreen() {
         <div className={styles.inputWrapper}>
           <label htmlFor="workhours">Work hours:</label>
           <div className={styles.right}>
-            <TimePicker
-              showSecond={false}
-              defaultValue={workHours.start}
-              className="xxx"
-              onChange={(newTime) => {
-                handleTimeChange(newTime, "workStart");
-              }}
-              format={format}
-              use12Hours
-            />
-            <span className={styles.margin}>to</span>
-            <TimePicker
-              showSecond={false}
-              defaultValue={workHours.end}
-              className="xxx"
-              onChange={(newTime) => {
-                handleTimeChange(newTime, "workEnd");
-              }}
-              format={format}
-              use12Hours
-            />
+            <div className={styles.datesPairWrapper}>
+              <TimePicker
+                showSecond={false}
+                defaultValue={workHours.start}
+                className="xxx"
+                onChange={(newTime) => {
+                  handleTimeChange(newTime, "workStart");
+                }}
+                format={format}
+                use12Hours
+              />
+              <span className={styles.mobileShiftingMargin}>to</span>
+              <div className={styles.mobileOnlyVertMargin} />
+              <TimePicker
+                showSecond={false}
+                defaultValue={workHours.end}
+                className="xxx"
+                onChange={(newTime) => {
+                  handleTimeChange(newTime, "workEnd");
+                }}
+                format={format}
+                use12Hours
+              />
+            </div>
           </div>
         </div>
 
         <div className={styles.inputWrapper}>
           <label htmlFor="lunch">Lunch break:</label>
           <div className={styles.right}>
-            <TimePicker
-              showSecond={false}
-              defaultValue={lunchBreak.start}
-              className="xxx"
-              onChange={(newTime) => {
-                handleTimeChange(newTime, "lunchStart");
-              }}
-              format={format}
-              use12Hours
-            />
-            <span className={styles.margin}>to</span>
-            <TimePicker
-              showSecond={false}
-              defaultValue={lunchBreak.end}
-              className="xxx"
-              onChange={(newTime) => {
-                handleTimeChange(newTime, "lunchEnd");
-              }}
-              format={format}
-              use12Hours
-            />
+            <div className={styles.datesPairWrapper}>
+              <TimePicker
+                showSecond={false}
+                defaultValue={lunchBreak.start}
+                className="xxx"
+                onChange={(newTime) => {
+                  handleTimeChange(newTime, "lunchStart");
+                }}
+                format={format}
+                use12Hours
+              />
+              <span className={styles.mobileShiftingMargin}>to</span>
+              <div className={styles.mobileOnlyVertMargin} />
+              <TimePicker
+                showSecond={false}
+                defaultValue={lunchBreak.end}
+                className="xxx"
+                onChange={(newTime) => {
+                  handleTimeChange(newTime, "lunchEnd");
+                }}
+                format={format}
+                use12Hours
+              />
+            </div>
           </div>
         </div>
 

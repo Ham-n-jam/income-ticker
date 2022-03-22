@@ -84,6 +84,6 @@
 
 @include responsive(mobile) {
   .wrapper {
-    min-width: 0px;
+    min-width: 220px;
   }
 }

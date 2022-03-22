@@ -55,6 +55,11 @@
   flex-direction: row;
 }
 
+.day {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .darkBg {
   border-radius: 5px;
   padding: 5px;
@@ -76,8 +81,18 @@
   margin-left: 5px;
 }
 
-.margin{
+.datesPairWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mobileShiftingMargin {
   margin: 10px;
+}
+
+.mobileOnlyVertMargin {
+  margin: 0px;
 }
 
 .spacer {
@@ -91,6 +106,8 @@
   border: none;
   border-radius: 5px;
   padding: 5px;
+  margin-left: -3px;
+  margin-right: -3px;
 }
 
 @include responsive(mobile) {
@@ -104,5 +121,19 @@
   }
   .right {
     justify-content: flex-start;
+  }
+  .dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-row-gap: 10px;
+  }
+  .mobileShiftingMargin {
+    display: none;
+  }
+  .datesPairWrapper {
+    flex-direction: column;
+  }
+  .mobileOnlyVertMargin {
+    margin-top: 8px;
   }
 }
