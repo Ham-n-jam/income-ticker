@@ -34,12 +34,14 @@
 .right {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   width: 100%;
 }
 
 .darkBg {
   border-radius: 5px;
   padding: 5px;
+  border: none;
 }
 
 .input {
@@ -66,4 +68,10 @@
   flex-grow: 1;
   height: 100%;
   justify-content: flex-end;
+}
+
+.datePicker {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
 }

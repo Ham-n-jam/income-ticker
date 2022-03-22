@@ -27,10 +27,20 @@ export default function IncomeScreen() {
     start: moment(lunchBreakStr.start),
     end: moment(lunchBreakStr.end),
   };
+  const startDate = new Date(Number(localStorage.getItem("startDate")));
 
   function getIsWorkday() {
     const currentDateTime = moment();
     return workdays.includes(currentDateTime.format("dddd").toLowerCase());
+  }
+
+  function msOfDay(m) {
+    return (
+      m.milliseconds() +
+      m.seconds() * 1000 +
+      m.minutes() * 60000 +
+      m.hours() * 3600000
+    );
   }
 
   function getPayrateCentsPerSecond() {
@@ -51,31 +61,37 @@ export default function IncomeScreen() {
     let payrateCentsPerDay =
       (parseFloat(paymentAmount) * 100) / daysWorkedPerPayFreq;
     let timeWorkedPerDay =
-      workHours.end - workHours.start - (lunchBreak.end - lunchBreak.start);
+      msOfDay(workHours.end) -
+      msOfDay(workHours.start) -
+      (msOfDay(lunchBreak.end) - msOfDay(lunchBreak.start));
     return payrateCentsPerDay * (1000.0 / timeWorkedPerDay);
   }
   const payrateCentsPerSecond = getPayrateCentsPerSecond();
 
   function getMilliSecondsWorkedToday() {
     const currentTime = moment();
-    if (currentTime.isBefore(workHours.start)) {
+    if (msOfDay(currentTime) < msOfDay(workHours.start)) {
       setWorkStatus("Work starting soon");
       return 0.0;
-    } else if (currentTime.isBefore(lunchBreak.start)) {
+    } else if (msOfDay(currentTime) < msOfDay(lunchBreak.start)) {
       setWorkStatus("Work in progress");
-      return currentTime - workHours.start;
-    } else if (currentTime.isBetween(lunchBreak.start, lunchBreak.end)) {
+      return msOfDay(currentTime) - msOfDay(workHours.start);
+    } else if (msOfDay(currentTime) < msOfDay(lunchBreak.end)) {
       setWorkStatus("Lunch break");
-      return lunchBreak.start - workHours.start;
-    } else if (currentTime.isBetween(lunchBreak.end, workHours.end)) {
+      return msOfDay(lunchBreak.start) - msOfDay(workHours.start);
+    } else if (msOfDay(currentTime) < msOfDay(workHours.end)) {
       setWorkStatus("Work in progress");
       return (
-        lunchBreak.start - workHours.start + (currentTime - lunchBreak.end)
+        msOfDay(lunchBreak.start) -
+        msOfDay(workHours.start) +
+        (msOfDay(currentTime) - msOfDay(lunchBreak.end))
       );
     } else {
       setWorkStatus("Done for the day");
       return (
-        lunchBreak.start - workHours.start + (workHours.end - lunchBreak.end)
+        msOfDay(lunchBreak.start) -
+        msOfDay(workHours.start) +
+        (msOfDay(workHours.end) - msOfDay(lunchBreak.end))
       );
     }
   }
@@ -86,9 +102,87 @@ export default function IncomeScreen() {
       setWorkStatus("Off work today");
       return todaysEarningsCents;
     }
-    const secondsWorkedToday = getMilliSecondsWorkedToday();
-    todaysEarningsCents = (payrateCentsPerSecond * secondsWorkedToday) / 1000;
+    const millisecondsWorkedToday = getMilliSecondsWorkedToday();
+    todaysEarningsCents =
+      (payrateCentsPerSecond * millisecondsWorkedToday) / 1000;
     return todaysEarningsCents;
+  }
+
+  const daysOfWeek = [];
+  daysOfWeek[0] = "monday";
+  daysOfWeek[1] = "tuesday";
+  daysOfWeek[2] = "wednesday";
+  daysOfWeek[3] = "thursday";
+  daysOfWeek[4] = "friday";
+  daysOfWeek[5] = "saturday";
+  daysOfWeek[6] = "sunday";
+
+  function getTotalEarningsCents() {
+    let daysWorkedInFirstWeek = 0;
+    let daysWorkedUpToThisWeek = 0;
+    let daysWorkedThisWeek = 0;
+
+    const startDay = moment(startDate).format("dddd").toLowerCase();
+    let idxOfStartDayInWeek = 0;
+    for (let i = 0; i < daysOfWeek.length; i++) {
+      if (daysOfWeek[i] === startDay) {
+        idxOfStartDayInWeek = i;
+      }
+    }
+    let daysSinceStartOfWeek = 0;
+    const currentDay = moment().format("dddd").toLowerCase();
+    for (let i = 0; i < daysOfWeek.length; i++) {
+      if (daysOfWeek[i] === currentDay) {
+        daysSinceStartOfWeek = i;
+      }
+    }
+
+    const weeksSinceStart = moment().diff(moment(startDate), "week");
+    // If at least a week has passed since starting work
+    if (Math.abs(weeksSinceStart) >= 1) {
+      for (let i = 0; i < workdays.length; i++) {
+        if (daysOfWeek.indexOf(workdays[i]) >= idxOfStartDayInWeek) {
+          daysWorkedInFirstWeek++;
+        }
+      }
+
+      const weeksSinceStartDate = moment().diff(
+        moment(startDate).add(1, "week").startOf("isoWeek"),
+        "week"
+      );
+      daysWorkedUpToThisWeek = weeksSinceStartDate * workdays.length;
+
+      for (let i = 0; i < daysSinceStartOfWeek; i++) {
+        if (workdays.includes(daysOfWeek[i])) {
+          daysWorkedThisWeek++;
+        }
+      }
+    } else {
+      // Started working this week
+      for (let i = idxOfStartDayInWeek; i < daysSinceStartOfWeek; i++) {
+        if (workdays.includes(daysOfWeek[i])) {
+          daysWorkedThisWeek++;
+        }
+      }
+    }
+
+    let totalMillisecondsWorkedUpToThisWeek =
+      (daysWorkedUpToThisWeek + daysWorkedThisWeek + daysWorkedInFirstWeek) *
+      (msOfDay(lunchBreak.start) -
+        msOfDay(workHours.start) +
+        (msOfDay(workHours.end) - msOfDay(lunchBreak.end)));
+    const total =
+      (payrateCentsPerSecond * totalMillisecondsWorkedUpToThisWeek) / 1000 +
+      getTodaysEarningsCents();
+
+    console.log({
+      daysWorkedInFirstWeek: daysWorkedInFirstWeek,
+      daysWorkedUpToThisWeek: daysWorkedUpToThisWeek,
+      daysWorkedThisWeek: daysWorkedThisWeek,
+      idxOfStartDayInWeek: idxOfStartDayInWeek,
+    });
+
+    return total;
   }
 
   return (
@@ -99,7 +193,7 @@ export default function IncomeScreen() {
       </div>
       <div className={styles.subTitle}>Total earnings</div>
       <div className={styles.subEarningsDisplay}>
-        <EarningsDisplay getCurrentValFunc={getTodaysEarningsCents} />
+        <EarningsDisplay getCurrentValFunc={getTotalEarningsCents} />
       </div>
       <div className={styles.spacer}>
         <div className={styles.settings}>

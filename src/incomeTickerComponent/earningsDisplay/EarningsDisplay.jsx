@@ -8,7 +8,7 @@ export default function EarningsDisplay({ getCurrentValFunc }) {
   useEffect(() => {
     const interval = setInterval(() => {
       setEarningsCents(Math.round(getCurrentValFunc()));
-    }, 1000);
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 

@@ -4,6 +4,9 @@ import Button from "../button/Button";
 import TimePicker from "rc-time-picker";
 import moment from "moment";
 import "rc-time-picker/assets/index.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker-cssmodules.css";
 
 export default function SetupScreen() {
   const daysOfTheWeek = {
@@ -42,6 +45,10 @@ export default function SetupScreen() {
       start: moment().hour(12).minute(0).second(0),
       end: moment().hour(13).minute(0).second(0),
     })
+  );
+
+  const [startDate, setStartDate] = useState(
+    loadDataField("startDate", new Date())
   );
 
   function handlePaymentFreqChange(event) {
@@ -85,10 +92,19 @@ export default function SetupScreen() {
   }
 
   function loadDataField(fieldName, defaultVal) {
-    let savedVal = JSON.parse(localStorage.getItem(fieldName));
-    if (savedVal && (fieldName === "workHours" || fieldName === "lunchBreak")) {
-      savedVal = { start: moment(savedVal.start), end: moment(savedVal.end) };
+    let savedVal = localStorage.getItem(fieldName);
+    if (savedVal && fieldName === "startDate") {
+      savedVal = new Date(Number(savedVal));
+    } else {
+      savedVal = JSON.parse(savedVal);
+      if (
+        savedVal &&
+        (fieldName === "workHours" || fieldName === "lunchBreak")
+      ) {
+        savedVal = { start: moment(savedVal.start), end: moment(savedVal.end) };
+      }
     }
+
     return savedVal || defaultVal;
   }
 
@@ -98,6 +114,7 @@ export default function SetupScreen() {
     localStorage.setItem("workdays", JSON.stringify(workdays));
     localStorage.setItem("workHours", JSON.stringify(workHours));
     localStorage.setItem("lunchBreak", JSON.stringify(lunchBreak));
+    localStorage.setItem("startDate", startDate.getTime());
   }
 
   return (
@@ -124,7 +141,7 @@ export default function SetupScreen() {
         <div className={styles.inputWrapper}>
           <label htmlFor="amount">Payment amount:</label>
           <div className={styles.right}>
-            <span>$</span>
+            <div>$</div>
             <input
               className={styles.darkBg}
               type="number"
@@ -213,6 +230,21 @@ export default function SetupScreen() {
               format={format}
               use12Hours
             />
+          </div>
+        </div>
+
+        <div className={styles.inputWrapper}>
+          <label htmlFor="startDate">Work start date:</label>
+          <div className={styles.right}>
+            <div className={styles.datePicker}>
+              <DatePicker
+                className={styles.datePicker}
+                wrapperClassName="datePicker"
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                dateFormat="dd/MM/yyyy"
+              />
+            </div>
           </div>
         </div>
       </form>
