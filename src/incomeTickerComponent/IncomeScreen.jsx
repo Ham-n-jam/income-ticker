@@ -34,13 +34,12 @@ export default function IncomeScreen() {
     return workdays.includes(currentDateTime.format("dddd").toLowerCase());
   }
 
-  function msOfDay(m) {
-    return (
-      m.milliseconds() +
-      m.seconds() * 1000 +
-      m.minutes() * 60000 +
-      m.hours() * 3600000
-    );
+  function msOfDay(m, ignoreSec = true) {
+    let ms = m.minutes() * 60000 + m.hours() * 3600000;
+    if (!ignoreSec) {
+      ms += m.milliseconds() + m.seconds() * 1000;
+    }
+    return ms;
   }
 
   function getPayrateCentsPerSecond() {
@@ -70,21 +69,21 @@ export default function IncomeScreen() {
 
   function getMilliSecondsWorkedToday() {
     const currentTime = moment();
-    if (msOfDay(currentTime) < msOfDay(workHours.start)) {
+    if (msOfDay(currentTime, false) < msOfDay(workHours.start)) {
       setWorkStatus("Work starting soon");
       return 0.0;
-    } else if (msOfDay(currentTime) < msOfDay(lunchBreak.start)) {
+    } else if (msOfDay(currentTime, false) < msOfDay(lunchBreak.start)) {
       setWorkStatus("Work in progress");
-      return msOfDay(currentTime) - msOfDay(workHours.start);
-    } else if (msOfDay(currentTime) < msOfDay(lunchBreak.end)) {
+      return msOfDay(currentTime, false) - msOfDay(workHours.start);
+    } else if (msOfDay(currentTime, false) < msOfDay(lunchBreak.end)) {
       setWorkStatus("Lunch break");
       return msOfDay(lunchBreak.start) - msOfDay(workHours.start);
-    } else if (msOfDay(currentTime) < msOfDay(workHours.end)) {
+    } else if (msOfDay(currentTime, false) < msOfDay(workHours.end)) {
       setWorkStatus("Work in progress");
       return (
         msOfDay(lunchBreak.start) -
         msOfDay(workHours.start) +
-        (msOfDay(currentTime) - msOfDay(lunchBreak.end))
+        (msOfDay(currentTime, false) - msOfDay(lunchBreak.end))
       );
     } else {
       setWorkStatus("Done for the day");
