@@ -5,7 +5,7 @@ import SetupScreen from "./setup/SetupScreen";
 
 export default function IncomeTicker() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={"/income-ticker"}>
       <Routes>
         <Route path="/" element={<IncomeScreen />} />
         <Route path="/setup" element={<SetupScreen />} />
