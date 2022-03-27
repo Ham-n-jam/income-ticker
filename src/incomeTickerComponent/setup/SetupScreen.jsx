@@ -55,9 +55,11 @@ export default function SetupScreen() {
   function handlePaymentFreqChange(event) {
     setPaymentFreq(event.target.value);
   }
+
   function handlePaymentAmountChange(event) {
     setPaymentAmount(event.target.value);
   }
+
   function handlePaymentAmountFocusOut(event) {
     // Add the correct number of decimal places
     if (!paymentAmount.includes(".")) {
@@ -66,6 +68,7 @@ export default function SetupScreen() {
       setPaymentAmount(paymentAmount + "0");
     }
   }
+
   function handleWorkdayChange(event) {
     if (event.target.checked) {
       setWorkdays([event.target.id, ...workdays]);
@@ -73,6 +76,7 @@ export default function SetupScreen() {
       setWorkdays(workdays.filter((item) => item !== event.target.id));
     }
   }
+
   function handleTimeChange(newTime, target) {
     switch (target) {
       case "workStart":
@@ -260,7 +264,9 @@ export default function SetupScreen() {
           </div>
         </div>
       </form>
-
+      <div className={styles.info}>
+        Please note that this data is only saved to this device.
+      </div>
       <div className={styles.spacer}>
         <Button
           onClick={saveDataToLocalStorage}

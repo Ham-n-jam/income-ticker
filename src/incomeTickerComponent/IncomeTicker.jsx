@@ -5,7 +5,7 @@ import SetupScreen from "./setup/SetupScreen";
 
 export default function IncomeTicker() {
   return (
-    <HashRouter basename={"/income-ticker"}>
+    <HashRouter basename={"/"}>
       <Routes>
         <Route path="/" element={<IncomeScreen />} />
         <Route path="/setup" element={<SetupScreen />} />
